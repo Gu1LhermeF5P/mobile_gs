@@ -12,15 +12,13 @@ export default function DashboardScreen({ navigation }) {
   const [corRisco, setCorRisco] = useState(colors.primary);
   const [mensagem, setMensagem] = useState('Analisando seus dados...');
   
-  // Estados para o Gráfico
-  const [labelsGrafico, setLabelsGrafico] = useState(["Seg", "Ter", "Qua", "Qui", "Sex"]);
-  const [dadosGrafico, setDadosGrafico] = useState([3, 3, 3, 3, 3]); // Dados iniciais neutros
+  const [labelsGrafico, setLabelsGrafico] = useState(["Dia 1", "Dia 2", "Dia 3"]);
+  const [dadosGrafico, setDadosGrafico] = useState([3, 3, 3]);
 
   const calcularBurnout = async () => {
     try {
       const res = await api.get('/humor');
-      const dados = res.data; // O backend traz do mais antigo pro mais novo por padrão? 
-      // No PrioridadesScreen invertemos, aqui precisamos da ordem cronológica
+      const dados = res.data; // Ordem: Antigo -> Novo (dependendo da sua API)
 
       if (dados.length === 0) {
         setRisco("Sem dados");
@@ -28,10 +26,14 @@ export default function DashboardScreen({ navigation }) {
         return;
       }
 
-      // 1. Lógica do Status (Média)
+      // 1. Cálculo da Média
       const soma = dados.reduce((acc, item) => acc + item.nivel, 0);
       const media = soma / dados.length;
 
+      // DEBUG: Olhe no seu terminal do VS Code para ver esse valor!
+      console.log(`Média Atual: ${media.toFixed(2)} | Total Registros: ${dados.length}`);
+
+      // 2. Lógica de Risco
       if (media >= 4) {
         setRisco("Baixo Risco");
         setCorRisco("#4CAF50"); 
@@ -41,25 +43,24 @@ export default function DashboardScreen({ navigation }) {
         setCorRisco("#FF9800");
         setMensagem("Oscilações detectadas. Monitore sua rotina.");
       } else {
+        // --- ZONA DE PERIGO (< 2.5) ---
         setRisco("ALTO RISCO");
         setCorRisco("#D32F2F");
-        setMensagem("Declínio acentuado. Protocolo de emergência sugerido.");
+        setMensagem("Declínio acentuado. Protocolo de emergência ativado.");
         
-        // Alerta apenas se não tiver sido mostrado recentemente (lógica simples aqui)
-        // dispararProtocoloEmergencia(); 
+        // CHAMA A FUNÇÃO DE REDIRECIONAMENTO IMEDIATAMENTE
+        dispararProtocoloEmergencia();
       }
 
-      // 2. Preparar dados para o Gráfico (Pegar os últimos 5 registros)
-      // Se tiver menos de 5, pega todos.
+      // 3. Configurar Gráfico (Últimos 5)
       const ultimos = dados.slice(Math.max(dados.length - 5, 0));
-      
       const values = ultimos.map(item => item.nivel);
-      // Pega apenas o dia da data (ex: 2025-11-20 -> "20")
-      // Se sua API retorna data completa, talvez precise ajustar o substring
-      const labels = ultimos.map(item => item.data ? item.data.substring(8, 10) : "Dia");
+      const labels = ultimos.map((item, index) => `D${index + 1}`);
 
-      setDadosGrafico(values);
-      setLabelsGrafico(labels);
+      if(values.length > 0) {
+        setDadosGrafico(values);
+        setLabelsGrafico(labels);
+      }
 
     } catch (e) {
       console.log(e);
@@ -68,16 +69,28 @@ export default function DashboardScreen({ navigation }) {
   };
 
   const dispararProtocoloEmergencia = () => {
+    // ALERTA BLOQUEANTE (Não dá para fechar clicando fora)
     Alert.alert(
-      "⚠️ ALERTA DE BURNOUT",
-      "Sua curva de humor caiu drasticamente. Vamos respirar?",
+      "🚨 ALERTA CRÍTICO DE BURNOUT",
+      "Sua média emocional caiu para níveis perigosos. O sistema bloqueou outras funções para sua segurança.\n\nÉ hora de respirar.",
       [
-        { text: "Ir para Respiração", onPress: () => navigation.navigate('Respirar') }
-      ]
+        { 
+          text: "IR PARA RESPIRAÇÃO AGORA", 
+          onPress: () => {
+            // NAVEGAÇÃO FORÇADA
+            navigation.navigate('Respirar');
+          }
+        }
+      ],
+      { cancelable: false } // Impede fechar o alerta
     );
   };
 
-  useEffect(() => { if(isFocused) calcularBurnout(); }, [isFocused]);
+  useEffect(() => { 
+    if(isFocused) {
+      calcularBurnout(); 
+    }
+  }, [isFocused]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -93,35 +106,33 @@ export default function DashboardScreen({ navigation }) {
         <Text style={styles.cardDesc}>{mensagem}</Text>
       </View>
 
-      {/* GRÁFICO DE TENDÊNCIA */}
-      <Text style={styles.sectionHeader}>Sua Curva Emocional (Últimos Dias)</Text>
+      {/* GRÁFICO */}
+      <Text style={styles.sectionHeader}>Sua Curva Emocional</Text>
       <View style={styles.chartContainer}>
         <LineChart
           data={{
             labels: labelsGrafico,
             datasets: [{ data: dadosGrafico }]
           }}
-          width={Dimensions.get("window").width - 40} // Largura da tela menos padding
+          width={Dimensions.get("window").width - 40} 
           height={220}
           yAxisLabel=""
           yAxisSuffix=""
-          yAxisInterval={1}
           fromZero={true}
-          segments={5} // Linhas horizontais (1 a 5)
+          segments={5}
           chartConfig={{
             backgroundColor: "#ffffff",
             backgroundGradientFrom: "#ffffff",
             backgroundGradientTo: "#ffffff",
-            decimalPlaces: 0,
-            color: (opacity = 1) => corRisco, // A linha muda de cor conforme o risco!
+            decimalPlaces: 1,
+            color: (opacity = 1) => corRisco,
             labelColor: (opacity = 1) => colors.textLight,
             style: { borderRadius: 16 },
             propsForDots: { r: "6", strokeWidth: "2", stroke: corRisco }
           }}
-          bezier // Deixa a linha curva (suave)
+          bezier
           style={{ marginVertical: 8, borderRadius: 16 }}
         />
-        <Text style={styles.chartLegend}>Escala: 1 (Esgotado) a 5 (Ótimo)</Text>
       </View>
 
       <Text style={styles.sectionHeader}>Ações Recomendadas</Text>
@@ -137,7 +148,6 @@ export default function DashboardScreen({ navigation }) {
           <Text style={styles.smallDesc}>Canal de Ajuda</Text>
         </View>
       </View>
-
     </ScrollView>
   );
 }
@@ -145,26 +155,14 @@ export default function DashboardScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: { flexGrow: 1, padding: 20, backgroundColor: colors.background, paddingTop: 50, paddingBottom: 40 },
   header: { fontSize: 28, fontWeight: 'bold', color: colors.primary, marginBottom: 20 },
-  cardMain: { 
-    backgroundColor: '#FFF', padding: 20, borderRadius: 15, marginBottom: 25, 
-    elevation: 3, borderLeftWidth: 8 
-  },
+  cardMain: { backgroundColor: '#FFF', padding: 20, borderRadius: 15, marginBottom: 25, elevation: 3, borderLeftWidth: 8 },
   cardLabel: { fontSize: 12, color: colors.textLight, textTransform: 'uppercase', marginBottom: 5 },
   riskTitle: { fontSize: 24, fontWeight: 'bold', marginBottom: 5 },
   cardDesc: { fontSize: 15, color: colors.text },
-  
   sectionHeader: { fontSize: 18, fontWeight: 'bold', color: colors.text, marginBottom: 15, marginTop: 10 },
-  
-  chartContainer: {
-    backgroundColor: '#FFF', borderRadius: 16, padding: 10, elevation: 2, marginBottom: 25, alignItems: 'center'
-  },
-  chartLegend: { fontSize: 12, color: colors.textLight, marginTop: 5 },
-
+  chartContainer: { backgroundColor: '#FFF', borderRadius: 16, padding: 10, elevation: 2, marginBottom: 25, alignItems: 'center' },
   grid: { flexDirection: 'row', justifyContent: 'space-between' },
-  cardSmall: { 
-    backgroundColor: '#FFF', width: '48%', padding: 15, borderRadius: 15, 
-    elevation: 2, alignItems: 'center', justifyContent: 'center' 
-  },
+  cardSmall: { backgroundColor: '#FFF', width: '48%', padding: 15, borderRadius: 15, elevation: 2, alignItems: 'center', justifyContent: 'center' },
   smallTitle: { fontWeight: 'bold', marginTop: 5, color: colors.text },
   smallDesc: { fontSize: 12, textAlign: 'center', color: colors.textLight }
 });

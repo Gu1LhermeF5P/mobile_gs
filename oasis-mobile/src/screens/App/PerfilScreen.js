@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Switch } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
-import { colors } from '../../config/theme'; // Import Direto
+import { colors } from '../../config/theme';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function PerfilScreen({ navigation }) {
@@ -18,7 +18,7 @@ export default function PerfilScreen({ navigation }) {
         <Text style={styles.email}>{user?.email}</Text>
       </View>
 
-      {/* Botão: Sobre o App */}
+      {/* Botão: Sobre o App (LIMPO) */}
       <TouchableOpacity 
         style={styles.optionRow} 
         onPress={() => navigation.navigate('Sobre')}
@@ -41,15 +41,26 @@ export default function PerfilScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: colors.background },
-  header: { alignItems: 'center', marginBottom: 30, marginTop: 20 },
-  avatar: { width: 80, height: 80, borderRadius: 40, justifyContent: 'center', alignItems: 'center', marginBottom: 10, backgroundColor: colors.secondary },
+  header: { alignItems: 'center', marginBottom: 40, marginTop: 30 },
+  avatar: { 
+    width: 80, height: 80, borderRadius: 40, 
+    justifyContent: 'center', alignItems: 'center', marginBottom: 15, 
+    backgroundColor: colors.secondary 
+  },
   avatarText: { fontSize: 32, fontWeight: 'bold', color: '#FFF' },
-  name: { fontSize: 20, fontWeight: 'bold', color: colors.text },
-  email: { fontSize: 14, color: colors.textLight },
+  name: { fontSize: 22, fontWeight: 'bold', color: colors.text },
+  email: { fontSize: 14, color: colors.textLight, marginTop: 5 },
+  
+  // ESTILO NOVO E LIMPO
   optionRow: { 
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    padding: 15, borderRadius: 12, marginBottom: 15, elevation: 1, backgroundColor: colors.surface 
+    padding: 18, borderRadius: 12, marginBottom: 15, 
+    backgroundColor: '#FFFFFF', // Fundo puramente branco
+    borderWidth: 1,
+    borderColor: '#EEEEEE', // Borda super sutil
+    // Sem elevation (sombra) para tirar o cinza
   },
+  
   optionText: { fontSize: 16, fontWeight: '500', color: colors.text },
   logoutBtn: { marginTop: 20, padding: 15, borderRadius: 12, backgroundColor: '#FFEBEE', alignItems: 'center' },
   logoutText: { color: '#D32F2F', fontWeight: 'bold' }

@@ -5,7 +5,6 @@ import { colors, commitHash } from '../../config/theme';
 
 export default function SobreScreen() {
   
-  // Função para abrir o link no navegador do celular
   const openGitHub = (url) => {
     Linking.openURL(url).catch(err => console.error("Erro ao abrir link", err));
   };
@@ -13,7 +12,6 @@ export default function SobreScreen() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       
-      {/* Cabeçalho */}
       <View style={styles.headerContainer}>
         <View style={styles.iconCircle}>
           <Ionicons name="information" size={40} color={colors.white} />
@@ -22,19 +20,15 @@ export default function SobreScreen() {
         <Text style={styles.version}>Versão 1.0.0</Text>
       </View>
 
-      {/* Descrição */}
       <Text style={styles.description}>
         Plataforma de bem-estar corporativo focada em equilíbrio híbrido e rituais de desconexão.
       </Text>
 
-      {/* SEÇÃO: DESENVOLVEDORES (NOVO) */}
+      {/* CARD LIMPO: Desenvolvedores */}
       <View style={styles.card}>
         <Text style={styles.sectionTitle}>Desenvolvedores</Text>
         
-        <TouchableOpacity 
-          style={styles.devRow} 
-          onPress={() => openGitHub('https://github.com/Gu1LhermeF5P')}
-        >
+        <TouchableOpacity style={styles.devRow} onPress={() => openGitHub('https://github.com/Gu1LhermeF5P')}>
           <Ionicons name="logo-github" size={24} color={colors.primary} />
           <View style={styles.devInfo}>
             <Text style={styles.devName}>Guilherme</Text>
@@ -45,10 +39,7 @@ export default function SobreScreen() {
 
         <View style={styles.divider} />
 
-        <TouchableOpacity 
-          style={styles.devRow} 
-          onPress={() => openGitHub('https://github.com/LarissaMouraDev')}
-        >
+        <TouchableOpacity style={styles.devRow} onPress={() => openGitHub('https://github.com/LarissaMouraDev')}>
           <Ionicons name="logo-github" size={24} color={colors.primary} />
           <View style={styles.devInfo}>
             <Text style={styles.devName}>Larissa</Text>
@@ -58,7 +49,7 @@ export default function SobreScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Dados Técnicos */}
+      {/* CARD LIMPO: Dados da Build */}
       <View style={[styles.card, { marginTop: 20 }]}>
         <Text style={styles.sectionTitle}>Dados da Build</Text>
         <Text style={styles.label}>Hash do Commit:</Text>
@@ -67,7 +58,8 @@ export default function SobreScreen() {
         </View>
       </View>
 
-      <Text style={styles.footer}>© 2025 Projeto FIAP</Text>
+      {/* Rodapé Atualizado */}
+      <Text style={styles.footer}>© 2025 Oasis</Text>
 
     </ScrollView>
   );
@@ -76,25 +68,29 @@ export default function SobreScreen() {
 const styles = StyleSheet.create({
   container: { flexGrow: 1, padding: 20, backgroundColor: colors.background, alignItems: 'center' },
   headerContainer: { alignItems: 'center', marginBottom: 20, marginTop: 10 },
-  iconCircle: { width: 80, height: 80, borderRadius: 40, backgroundColor: colors.primary, justifyContent: 'center', alignItems: 'center', marginBottom: 15, elevation: 5 },
+  iconCircle: { width: 80, height: 80, borderRadius: 40, backgroundColor: colors.primary, justifyContent: 'center', alignItems: 'center', marginBottom: 15 },
   appName: { fontSize: 28, fontWeight: 'bold', color: colors.primary },
   version: { fontSize: 14, color: colors.textLight, marginTop: 5 },
   description: { fontSize: 16, color: colors.text, textAlign: 'center', marginBottom: 30, paddingHorizontal: 10 },
   
-  // Estilos do Card
-  card: { width: '100%', backgroundColor: colors.surface, borderRadius: 12, padding: 20, elevation: 2 },
-  sectionTitle: { fontSize: 18, fontWeight: 'bold', color: colors.text, marginBottom: 15 },
+  // CARD ATUALIZADO (Sem a sombra cinza feia)
+  card: { 
+    width: '100%', 
+    backgroundColor: '#FFFFFF', 
+    borderRadius: 16, 
+    padding: 20, 
+    borderWidth: 1,
+    borderColor: '#F0F0F0' // Borda bem sutil no lugar da sombra
+  },
   
-  // Estilos dos Devs
+  sectionTitle: { fontSize: 18, fontWeight: 'bold', color: colors.text, marginBottom: 15 },
   devRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 8 },
   devInfo: { flex: 1, marginLeft: 15 },
   devName: { fontSize: 16, fontWeight: 'bold', color: colors.text },
   devLink: { fontSize: 12, color: colors.textLight },
-  divider: { height: 1, backgroundColor: '#EEE', marginVertical: 10 },
-
-  // Estilos Técnicos
+  divider: { height: 1, backgroundColor: '#F0F0F0', marginVertical: 10 },
   label: { fontSize: 14, color: colors.textLight, fontWeight: '600' },
-  hashBox: { backgroundColor: '#F5F7FA', padding: 10, borderRadius: 6, marginTop: 5, borderWidth: 1, borderColor: '#DDD', alignItems: 'center' },
+  hashBox: { backgroundColor: '#F9F9F9', padding: 12, borderRadius: 8, marginTop: 8, alignItems: 'center' },
   hashText: { fontFamily: 'monospace', color: colors.secondary, fontWeight: 'bold' },
   footer: { marginTop: 30, color: colors.textLight, fontSize: 12 }
 });

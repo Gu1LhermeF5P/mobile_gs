@@ -33,32 +33,46 @@ function AppTabs() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        // Configuração das cores da barra de abas
-        tabBarActiveTintColor: colors.primary, // Cor do ícone ativo (Azul-petróleo)
-        tabBarInactiveTintColor: colors.accentGrey, // Cor do ícone inativo (Cinza)
+        // Cor do ícone ativo (Azul-petróleo)
+        tabBarActiveTintColor: colors.primary,
+        // Cor do ícone inativo (Cinza suave para limpeza visual)
+        tabBarInactiveTintColor: colors.textLight,
         
-        // CORREÇÃO AQUI: Altura ajustada para 80 e Padding 20 para evitar botões do Android
+        // Estilização da Barra (Clean e Moderna)
         tabBarStyle: { 
           backgroundColor: colors.white, 
-          borderTopColor: '#E0E0E0', 
+          borderTopColor: '#F0F0F0', // Borda bem sutil
+          borderTopWidth: 1,
           height: 80, 
           paddingBottom: 20, 
-          paddingTop: 10 
+          paddingTop: 10,
+          elevation: 10,      // Sombra no Android
+          shadowOpacity: 0.1, // Sombra no iOS
+        },
+
+        // Estilo do Texto das abas
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '600',
+          marginBottom: 0
         },
         
+        // Configuração dos Ícones
         tabBarIcon: ({ color, size, focused }) => {
           const icons = {
             Dashboard: focused ? 'home' : 'home-outline',
-            Ritual: focused ? 'list' : 'list-outline',
+            Diario: focused ? 'book' : 'book-outline', // Ícone de Livro para o Diário
             Respirar: focused ? 'leaf' : 'leaf-outline',
             Perfil: focused ? 'person' : 'person-outline',
           };
-          return <Ionicons name={icons[route.name]} size={size} color={color} />;
+          // Aumenta levemente o ícone quando selecionado (28px vs 24px)
+          return <Ionicons name={icons[route.name]} size={focused ? 28 : 24} color={color} />;
         },
       })}
     >
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
-      <Tab.Screen name="Ritual" component={PrioridadesScreen} options={{title: 'Check-out'}}/>
+      {/* Renomeado de Ritual para Diario para fazer sentido com o ícone */}
+      <Tab.Screen name="Diario" component={PrioridadesScreen} options={{title: 'Diário'}}/>
       <Tab.Screen name="Respirar" component={RespiracaoScreen} />
       <Tab.Screen name="Perfil" component={PerfilScreen} />
     </Tab.Navigator>
