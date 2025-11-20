@@ -8,4 +8,4 @@ export const colors = {
   white: '#FFFFFF'
 };
 
-export const commitHash = "v1.0-stable";
+export const commitHash = "5da00a4";
