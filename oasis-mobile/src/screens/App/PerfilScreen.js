@@ -1,48 +1,33 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Switch } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
-import { useTheme } from '../../contexts/ThemeContext'; // Importar Tema
+import { colors } from '../../config/theme'; // Import Direto
 import { Ionicons } from '@expo/vector-icons';
 
 export default function PerfilScreen({ navigation }) {
   const { signOut, user } = useAuth();
-  const { theme, isDarkMode, toggleTheme } = useTheme(); // Usar Tema
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
+    <View style={styles.container}>
       
       <View style={styles.header}>
-        <View style={[styles.avatar, { backgroundColor: theme.secondary }]}>
+        <View style={styles.avatar}>
           <Text style={styles.avatarText}>{user?.email?.[0].toUpperCase()}</Text>
         </View>
-        <Text style={[styles.name, { color: theme.text }]}>Colaborador OASIS</Text>
-        <Text style={[styles.email, { color: theme.textLight }]}>{user?.email}</Text>
-      </View>
-
-      {/* Opção: Modo Escuro */}
-      <View style={[styles.optionRow, { backgroundColor: theme.surface }]}>
-        <View style={{flexDirection:'row', alignItems:'center'}}>
-          <Ionicons name="moon" size={24} color={theme.primary} style={{marginRight: 10}} />
-          <Text style={[styles.optionText, { color: theme.text }]}>Modo Escuro</Text>
-        </View>
-        <Switch 
-          value={isDarkMode} 
-          onValueChange={toggleTheme}
-          trackColor={{ false: "#767577", true: theme.primary }}
-          thumbColor={isDarkMode ? "#f4f3f4" : "#f4f3f4"}
-        />
+        <Text style={styles.name}>Colaborador OASIS</Text>
+        <Text style={styles.email}>{user?.email}</Text>
       </View>
 
       {/* Botão: Sobre o App */}
       <TouchableOpacity 
-        style={[styles.optionRow, { backgroundColor: theme.surface }]} 
-        onPress={() => navigation.navigate('Sobre')} // NAVEGAÇÃO AQUI
+        style={styles.optionRow} 
+        onPress={() => navigation.navigate('Sobre')}
       >
         <View style={{flexDirection:'row', alignItems:'center'}}>
-          <Ionicons name="information-circle" size={24} color={theme.primary} style={{marginRight: 10}} />
-          <Text style={[styles.optionText, { color: theme.text }]}>Sobre o App (Versão)</Text>
+          <Ionicons name="information-circle" size={24} color={colors.primary} style={{marginRight: 10}} />
+          <Text style={styles.optionText}>Sobre o App</Text>
         </View>
-        <Ionicons name="chevron-forward" size={24} color={theme.textLight} />
+        <Ionicons name="chevron-forward" size={24} color={colors.textLight} />
       </TouchableOpacity>
 
       {/* Botão Sair */}
@@ -55,17 +40,17 @@ export default function PerfilScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
+  container: { flex: 1, padding: 20, backgroundColor: colors.background },
   header: { alignItems: 'center', marginBottom: 30, marginTop: 20 },
-  avatar: { width: 80, height: 80, borderRadius: 40, justifyContent: 'center', alignItems: 'center', marginBottom: 10 },
+  avatar: { width: 80, height: 80, borderRadius: 40, justifyContent: 'center', alignItems: 'center', marginBottom: 10, backgroundColor: colors.secondary },
   avatarText: { fontSize: 32, fontWeight: 'bold', color: '#FFF' },
-  name: { fontSize: 20, fontWeight: 'bold' },
-  email: { fontSize: 14 },
+  name: { fontSize: 20, fontWeight: 'bold', color: colors.text },
+  email: { fontSize: 14, color: colors.textLight },
   optionRow: { 
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    padding: 15, borderRadius: 12, marginBottom: 15, elevation: 1 
+    padding: 15, borderRadius: 12, marginBottom: 15, elevation: 1, backgroundColor: colors.surface 
   },
-  optionText: { fontSize: 16, fontWeight: '500' },
+  optionText: { fontSize: 16, fontWeight: '500', color: colors.text },
   logoutBtn: { marginTop: 20, padding: 15, borderRadius: 12, backgroundColor: '#FFEBEE', alignItems: 'center' },
   logoutText: { color: '#D32F2F', fontWeight: 'bold' }
 });
