@@ -1,8 +1,9 @@
 import axios from 'axios';
 
 const api = axios.create({
-  // Se estiver no celular físico, use o IP da sua máquina (ex: 192.168.0.X)
-  baseURL: 'http://172.22.48.1:8080/api', 
+  // 🛑 MUDE ISTO PARA O IP DO SEU PC (cmd -> ipconfig -> IPv4)
+  baseURL: 'http://172.22.48.1:8080/api',
+  timeout: 5000, 
   headers: { 'Content-Type': 'application/json' }
 });
 
