@@ -1,9 +1,9 @@
 import axios from 'axios';
 
 const api = axios.create({
-  // 🛑 MUDE ISTO PARA O IP DO SEU PC (cmd -> ipconfig -> IPv4)
-  baseURL: 'http://172.22.48.1:8080/api',
-  timeout: 5000, 
+  // AQUI ESTÁ A CORREÇÃO: Use o IP 192.168.0.109
+  baseURL: 'http://192.168.0.109:8080/api', 
+  timeout: 10000, 
   headers: { 'Content-Type': 'application/json' }
 });
 

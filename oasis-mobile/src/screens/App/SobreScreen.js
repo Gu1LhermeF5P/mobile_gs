@@ -1,145 +1,100 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, commitHash } from '../../config/theme';
 
 export default function SobreScreen() {
+  
+  // Função para abrir o link no navegador do celular
+  const openGitHub = (url) => {
+    Linking.openURL(url).catch(err => console.error("Erro ao abrir link", err));
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       
-      {/* Cabeçalho com Ícone */}
+      {/* Cabeçalho */}
       <View style={styles.headerContainer}>
         <View style={styles.iconCircle}>
           <Ionicons name="information" size={40} color={colors.white} />
         </View>
         <Text style={styles.appName}>OÁSIS Mobile</Text>
-        <Text style={styles.version}>Versão 1.0.0 (Beta)</Text>
+        <Text style={styles.version}>Versão 1.0.0</Text>
       </View>
 
       {/* Descrição */}
       <Text style={styles.description}>
-        O OÁSIS é uma plataforma de bem-estar corporativo focada em criar rituais de desconexão e proteger o foco no trabalho híbrido.
+        Plataforma de bem-estar corporativo focada em equilíbrio híbrido e rituais de desconexão.
       </Text>
 
-      {/* Dados Técnicos (Requisito da Avaliação) */}
-      <View style={styles.techCard}>
-        <Text style={styles.sectionTitle}>Dados da Build</Text>
+      {/* SEÇÃO: DESENVOLVEDORES (NOVO) */}
+      <View style={styles.card}>
+        <Text style={styles.sectionTitle}>Desenvolvedores</Text>
         
-        <View style={styles.row}>
-          <Text style={styles.label}>Desenvolvedor:</Text>
-          <Text style={styles.value}>Seu Nome / RM</Text>
-        </View>
-
-        <View style={styles.row}>
-          <Text style={styles.label}>Tecnologia:</Text>
-          <Text style={styles.value}>React Native + Expo</Text>
-        </View>
+        <TouchableOpacity 
+          style={styles.devRow} 
+          onPress={() => openGitHub('https://github.com/Gu1LhermeF5P')}
+        >
+          <Ionicons name="logo-github" size={24} color={colors.primary} />
+          <View style={styles.devInfo}>
+            <Text style={styles.devName}>Guilherme</Text>
+            <Text style={styles.devLink}>github.com/Gu1LhermeF5P</Text>
+          </View>
+          <Ionicons name="open-outline" size={20} color={colors.textLight} />
+        </TouchableOpacity>
 
         <View style={styles.divider} />
 
-        <Text style={styles.label}>Hash do Commit (Ref):</Text>
+        <TouchableOpacity 
+          style={styles.devRow} 
+          onPress={() => openGitHub('https://github.com/LarissaMouraDev')}
+        >
+          <Ionicons name="logo-github" size={24} color={colors.primary} />
+          <View style={styles.devInfo}>
+            <Text style={styles.devName}>Larissa</Text>
+            <Text style={styles.devLink}>github.com/LarissaMouraDev</Text>
+          </View>
+          <Ionicons name="open-outline" size={20} color={colors.textLight} />
+        </TouchableOpacity>
+      </View>
+
+      {/* Dados Técnicos */}
+      <View style={[styles.card, { marginTop: 20 }]}>
+        <Text style={styles.sectionTitle}>Dados da Build</Text>
+        <Text style={styles.label}>Hash do Commit:</Text>
         <View style={styles.hashBox}>
-          <Text style={styles.hashText}>{commitHash || 'dev-local'}</Text>
+          <Text style={styles.hashText}>{commitHash}</Text>
         </View>
       </View>
 
-      <Text style={styles.footer}>© 2025 Equilíbrio Híbrido Inteligente</Text>
+      <Text style={styles.footer}>© 2025 Projeto FIAP</Text>
 
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    padding: 20,
-    backgroundColor: colors.background,
-    alignItems: 'center',
-  },
-  headerContainer: {
-    alignItems: 'center',
-    marginBottom: 30,
-    marginTop: 20,
-  },
-  iconCircle: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 15,
-    elevation: 5,
-  },
-  appName: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: colors.primary,
-  },
-  version: {
-    fontSize: 14,
-    color: colors.accentGrey,
-    marginTop: 5,
-  },
-  description: {
-    fontSize: 16,
-    color: colors.textDark,
-    textAlign: 'center',
-    marginBottom: 30,
-    lineHeight: 24,
-  },
-  techCard: {
-    width: '100%',
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    padding: 20,
-    elevation: 2,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: colors.textDark,
-    marginBottom: 15,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 10,
-  },
-  label: {
-    fontSize: 14,
-    color: colors.accentGrey,
-    fontWeight: '600',
-  },
-  value: {
-    fontSize: 14,
-    color: colors.textDark,
-    fontWeight: 'bold',
-  },
-  divider: {
-    height: 1,
-    backgroundColor: '#EEE',
-    marginVertical: 15,
-  },
-  hashBox: {
-    backgroundColor: '#F5F7FA',
-    padding: 10,
-    borderRadius: 6,
-    marginTop: 5,
-    borderWidth: 1,
-    borderColor: '#DDD',
-    alignItems: 'center',
-  },
-  hashText: {
-    fontFamily: 'monospace', // Fonte estilo código
-    color: colors.secondary,
-    fontWeight: 'bold',
-  },
-  footer: {
-    marginTop: 40,
-    color: colors.accentGrey,
-    fontSize: 12,
-  },
+  container: { flexGrow: 1, padding: 20, backgroundColor: colors.background, alignItems: 'center' },
+  headerContainer: { alignItems: 'center', marginBottom: 20, marginTop: 10 },
+  iconCircle: { width: 80, height: 80, borderRadius: 40, backgroundColor: colors.primary, justifyContent: 'center', alignItems: 'center', marginBottom: 15, elevation: 5 },
+  appName: { fontSize: 28, fontWeight: 'bold', color: colors.primary },
+  version: { fontSize: 14, color: colors.textLight, marginTop: 5 },
+  description: { fontSize: 16, color: colors.text, textAlign: 'center', marginBottom: 30, paddingHorizontal: 10 },
+  
+  // Estilos do Card
+  card: { width: '100%', backgroundColor: colors.surface, borderRadius: 12, padding: 20, elevation: 2 },
+  sectionTitle: { fontSize: 18, fontWeight: 'bold', color: colors.text, marginBottom: 15 },
+  
+  // Estilos dos Devs
+  devRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 8 },
+  devInfo: { flex: 1, marginLeft: 15 },
+  devName: { fontSize: 16, fontWeight: 'bold', color: colors.text },
+  devLink: { fontSize: 12, color: colors.textLight },
+  divider: { height: 1, backgroundColor: '#EEE', marginVertical: 10 },
+
+  // Estilos Técnicos
+  label: { fontSize: 14, color: colors.textLight, fontWeight: '600' },
+  hashBox: { backgroundColor: '#F5F7FA', padding: 10, borderRadius: 6, marginTop: 5, borderWidth: 1, borderColor: '#DDD', alignItems: 'center' },
+  hashText: { fontFamily: 'monospace', color: colors.secondary, fontWeight: 'bold' },
+  footer: { marginTop: 30, color: colors.textLight, fontSize: 12 }
 });

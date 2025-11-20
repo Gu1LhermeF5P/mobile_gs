@@ -1,35 +1,33 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Animated, Easing } from 'react-native';
-import { useTheme } from '../../contexts/ThemeContext';
+// Mudei aqui: Importar colors direto, sem useTheme
+import { colors } from '../../config/theme'; 
 
 export default function RespiracaoScreen() {
-  const { theme } = useTheme();
-  const scaleAnim = useRef(new Animated.Value(1)).current; // Valor inicial 1x
+  // Removi: const { theme } = useTheme();
+  const scaleAnim = useRef(new Animated.Value(1)).current;
   const [fase, setFase] = useState('Inspire...');
 
   useEffect(() => {
     const respirar = () => {
       Animated.sequence([
-        // Inspirar (Cresce) - 4 segundos
         Animated.timing(scaleAnim, {
           toValue: 1.5,
           duration: 4000,
           useNativeDriver: true,
           easing: Easing.inOut(Easing.ease),
         }),
-        // Expirar (Diminui) - 4 segundos
         Animated.timing(scaleAnim, {
           toValue: 1,
           duration: 4000,
           useNativeDriver: true,
           easing: Easing.inOut(Easing.ease),
         })
-      ]).start(() => respirar()); // Loop infinito
+      ]).start(() => respirar());
     };
 
     respirar();
 
-    // Intervalo para mudar o texto
     const interval = setInterval(() => {
       setFase((prev) => prev === 'Inspire...' ? 'Expire...' : 'Inspire...');
     }, 4000);
@@ -38,14 +36,15 @@ export default function RespiracaoScreen() {
   }, []);
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <Text style={[styles.title, { color: theme.primary }]}>Ritual de Calma</Text>
+    // Mudei theme.background para colors.background
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <Text style={[styles.title, { color: colors.primary }]}>Ritual de Calma</Text>
       
       <Animated.View 
         style={[
           styles.circle, 
           { 
-            backgroundColor: theme.primary,
+            backgroundColor: colors.primary,
             transform: [{ scale: scaleAnim }] 
           }
         ]} 
@@ -53,7 +52,7 @@ export default function RespiracaoScreen() {
         <Text style={styles.text}>{fase}</Text>
       </Animated.View>
       
-      <Text style={[styles.desc, { color: theme.textLight }]}>
+      <Text style={[styles.desc, { color: colors.textLight }]}>
         Siga o ritmo do círculo
       </Text>
     </View>
