@@ -4,7 +4,7 @@
 | :--- | :--- |
 | Larissa de Freitas Moura | 555136 |
 | Guilherme Francisco | 557648 |
-# 🏝️ OASIS Mobile - Global Solution 2025
+#  OASIS Mobile - Global Solution 2025
 
 > **Equilíbrio Híbrido Inteligente:** Uma solução para combater o Burnout e gerenciar a saúde mental no futuro do trabalho.
 
