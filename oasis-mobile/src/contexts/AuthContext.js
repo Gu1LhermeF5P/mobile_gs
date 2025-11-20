@@ -9,6 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
 
   const signIn = async (email, password) => {
+    // Validação básica
     if (!email || !password) {
       Alert.alert("Atenção", "Informe e-mail e senha.");
       return;
@@ -17,25 +18,45 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
 
     try {
-      // LOGIN REAL NO JAVA
-      // Se a baseURL do api.js terminar em /api, use '/auth/login'
-      const response = await api.post('/auth/login', {
-        email: email,
-        senha: password
-      });
+      console.log("Tentando logar com:", email);
 
-      // Se chegou aqui, é 200 OK. O usuário existe.
-      // Salvamos o usuário no estado para liberar o App.
+      // --- O PULO DO GATO ---
+      // Criamos o objeto antes para garantir que a chave é 'senha'
+      const payload = {
+        email: email.trim(),   // Remove espaços extras do e-mail
+        senha: password.trim() // O JAVA ESPERA 'senha', NÃO 'password'
+      };
+
+      console.log("Enviando payload:", payload); // Para você conferir no terminal
+
+      // Chamada à API
+      const response = await api.post('/auth/login', payload);
+
+      console.log("Login autorizado! Usuário:", response.data.nome);
+      
+      // Salva o usuário no estado (isso libera o acesso ao Dashboard)
       setUser(response.data);
 
     } catch (error) {
-      console.log(error);
+      console.log("Erro Login:", error);
+      
       if (error.response) {
-        // Erro que veio do Java (401 ou 404)
-        Alert.alert("Falha no Login", "E-mail ou senha incorretos.");
+        // O Backend respondeu com um erro conhecido
+        const status = error.response.status;
+        
+        if (status === 401) {
+          Alert.alert("Acesso Negado", "Senha incorreta.");
+        } else if (status === 404) {
+          Alert.alert("Não Encontrado", "E-mail não cadastrado.");
+        } else {
+          Alert.alert("Erro", "Ocorreu um erro no servidor (" + status + ").");
+        }
       } else {
-        // Erro de conexão (Java desligado ou IP errado)
-        Alert.alert("Erro de Conexão", "Não foi possível conectar ao servidor.");
+        // O Backend nem respondeu (Erro de rede/IP)
+        Alert.alert(
+          "Erro de Conexão", 
+          "Não foi possível conectar. Verifique se o IP no api.js está correto e se o Java está rodando."
+        );
       }
     } finally {
       setLoading(false);

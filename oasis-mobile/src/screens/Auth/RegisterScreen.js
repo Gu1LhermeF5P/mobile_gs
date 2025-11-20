@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../../config/theme';
-import api from '../../services/api'; // <--- IMPORTANTE: Importar a API
+import api from '../../services/api'; // Importação da API
 
 export default function RegisterScreen({ navigation }) {
   const [name, setName] = useState('');
@@ -42,12 +42,16 @@ export default function RegisterScreen({ navigation }) {
     setLoading(true);
 
     try {
+      console.log("Enviando cadastro...");
+      
       // 2. CONEXÃO REAL COM O BACKEND JAVA
-      // Enviamos: nome, email, senha (conforme sua classe Usuario.java)
+      // .trim() remove espaços vazios antes e depois do texto (evita erros bobos)
       await api.post('/auth/register', {
-        nome: name,
-        email: email,
-        senha: password
+        nome: name.trim(),
+        email: email.trim(),
+        
+        // O PULO DO GATO: O Java espera 'senha', não 'password'
+        senha: password 
       });
 
       // Sucesso
@@ -61,6 +65,7 @@ export default function RegisterScreen({ navigation }) {
 
     } catch (error) {
       console.log("Erro no cadastro:", error);
+      
       // Tenta pegar a mensagem de erro do Backend (ex: "Email já cadastrado")
       const msgErro = error.response?.data || "Não foi possível criar a conta. Verifique a conexão.";
       

@@ -18,7 +18,7 @@ export default function DashboardScreen({ navigation }) {
   const calcularBurnout = async () => {
     try {
       const res = await api.get('/humor');
-      const dados = res.data; // Ordem: Antigo -> Novo (dependendo da sua API)
+      const dados = res.data;
 
       if (dados.length === 0) {
         setRisco("Sem dados");
@@ -26,37 +26,44 @@ export default function DashboardScreen({ navigation }) {
         return;
       }
 
-      // 1. Cálculo da Média
+      // 1. Contar quantos dias foram Ruins (Nível 1 ou 2)
+      // Nível 1 = Esgotado | Nível 2 = Triste
+      const diasRuins = dados.filter(item => item.nivel <= 2).length;
+
+      // 2. Cálculo da Média
       const soma = dados.reduce((acc, item) => acc + item.nivel, 0);
       const media = soma / dados.length;
 
-      // DEBUG: Olhe no seu terminal do VS Code para ver esse valor!
-      console.log(`Média Atual: ${media.toFixed(2)} | Total Registros: ${dados.length}`);
+      console.log(`Média: ${media.toFixed(2)} | Dias Ruins: ${diasRuins}`);
 
-      // 2. Lógica de Risco
+      // 3. Lógica de Diagnóstico
       if (media >= 4) {
         setRisco("Baixo Risco");
         setCorRisco("#4CAF50"); 
-        setMensagem("Sua linha de tendência está saudável.");
+        setMensagem("Sua saúde mental está estável.");
+      
       } else if (media >= 2.5) {
         setRisco("Atenção Moderada");
         setCorRisco("#FF9800");
-        setMensagem("Oscilações detectadas. Monitore sua rotina.");
+        setMensagem(`Você teve ${diasRuins} dias difíceis recentemente.`);
+      
       } else {
-        // --- ZONA DE PERIGO (< 2.5) ---
+        // --- ZONA DE ALTO RISCO (< 2.5) ---
         setRisco("ALTO RISCO");
         setCorRisco("#D32F2F");
-        setMensagem("Declínio acentuado. Protocolo de emergência ativado.");
+        setMensagem("Padrão persistente de exaustão.");
         
-        // CHAMA A FUNÇÃO DE REDIRECIONAMENTO IMEDIATAMENTE
-        dispararProtocoloEmergencia();
+        // 🚨 NOVA REGRA: Só dispara a intervenção se tiver 3+ dias ruins
+        if (diasRuins >= 3) {
+          dispararProtocoloEmergencia(diasRuins);
+        }
       }
 
-      // 3. Configurar Gráfico (Últimos 5)
+      // 4. Configurar Gráfico
       const ultimos = dados.slice(Math.max(dados.length - 5, 0));
       const values = ultimos.map(item => item.nivel);
       const labels = ultimos.map((item, index) => `D${index + 1}`);
-
+      
       if(values.length > 0) {
         setDadosGrafico(values);
         setLabelsGrafico(labels);
@@ -68,35 +75,27 @@ export default function DashboardScreen({ navigation }) {
     }
   };
 
-  const dispararProtocoloEmergencia = () => {
-    // ALERTA BLOQUEANTE (Não dá para fechar clicando fora)
+  const dispararProtocoloEmergencia = (qtdDias) => {
     Alert.alert(
-      "🚨 ALERTA CRÍTICO DE BURNOUT",
-      "Sua média emocional caiu para níveis perigosos. O sistema bloqueou outras funções para sua segurança.\n\nÉ hora de respirar.",
+      "🚨 ALERTA DE BURNOUT",
+      `Detectamos ${qtdDias} registros de exaustão emocional.\n\nPara sua segurança, vamos iniciar uma pausa obrigatória agora.`,
       [
         { 
-          text: "IR PARA RESPIRAÇÃO AGORA", 
-          onPress: () => {
-            // NAVEGAÇÃO FORÇADA
-            navigation.navigate('Respirar');
-          }
+          text: "INICIAR RESPIRAÇÃO", 
+          onPress: () => navigation.navigate('Respirar'),
+          style: "destructive"
         }
       ],
-      { cancelable: false } // Impede fechar o alerta
+      { cancelable: false }
     );
   };
 
-  useEffect(() => { 
-    if(isFocused) {
-      calcularBurnout(); 
-    }
-  }, [isFocused]);
+  useEffect(() => { if(isFocused) calcularBurnout(); }, [isFocused]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>Análise de Burnout</Text>
       
-      {/* CARD STATUS */}
       <View style={[styles.cardMain, { borderLeftColor: corRisco }]}>
         <View style={{flexDirection:'row', justifyContent:'space-between'}}>
           <Text style={styles.cardLabel}>Diagnóstico IA</Text>
@@ -106,7 +105,6 @@ export default function DashboardScreen({ navigation }) {
         <Text style={styles.cardDesc}>{mensagem}</Text>
       </View>
 
-      {/* GRÁFICO */}
       <Text style={styles.sectionHeader}>Sua Curva Emocional</Text>
       <View style={styles.chartContainer}>
         <LineChart
@@ -124,14 +122,16 @@ export default function DashboardScreen({ navigation }) {
             backgroundColor: "#ffffff",
             backgroundGradientFrom: "#ffffff",
             backgroundGradientTo: "#ffffff",
-            decimalPlaces: 1,
+            decimalPlaces: 0,
             color: (opacity = 1) => corRisco,
             labelColor: (opacity = 1) => colors.textLight,
             style: { borderRadius: 16 },
-            propsForDots: { r: "6", strokeWidth: "2", stroke: corRisco }
+            propsForDots: { r: "6", strokeWidth: "2", stroke: corRisco },
+            fillShadowGradient: corRisco,
+            fillShadowGradientOpacity: 0.2,
           }}
           bezier
-          style={{ marginVertical: 8, borderRadius: 16 }}
+          style={{ marginVertical: 8, borderRadius: 16, paddingRight: 40 }}
         />
       </View>
 
