@@ -30,8 +30,9 @@ O aplicativo foi compilado e publicado via Firebase App Distribution.
 **[📥 BAIXAR VERSÃO 1.0.0 (ANDROID)](https://appdistribution.firebase.dev/i/504de33bf4b0f59d)**
 
 ---
+
 **API JAVA :**
-**[lINK REPOSITORIO] (https://github.com/Gu1LhermeF5P/api_mobile)**
+**[LINK REPOSITORIO] (https://github.com/Gu1LhermeF5P/api_mobile)**
 ---
 
 ## 💡 O Problema e a Solução
