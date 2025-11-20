@@ -64,4 +64,4 @@ const styles = StyleSheet.create({
   optionText: { fontSize: 16, fontWeight: '500', color: colors.text },
   logoutBtn: { marginTop: 20, padding: 15, borderRadius: 12, backgroundColor: '#FFEBEE', alignItems: 'center' },
   logoutText: { color: '#D32F2F', fontWeight: 'bold' }
-});
+});z

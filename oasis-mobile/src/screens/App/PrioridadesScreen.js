@@ -5,8 +5,11 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import api from '../../services/api';
 import { colors } from '../../config/theme';
+import { useAuth } from '../../contexts/AuthContext'; // <--- IMPORTANTE: Contexto do usuário
 
 export default function PrioridadesScreen() {
+  const { user } = useAuth(); // <--- Pegamos o usuário logado aqui
+  
   const [registros, setRegistros] = useState([]);
   const [comentario, setComentario] = useState('');
   const [nivel, setNivel] = useState(3); 
@@ -16,19 +19,30 @@ export default function PrioridadesScreen() {
   const [editandoId, setEditandoId] = useState(null);
 
   const carregarDados = async () => {
+    // Só carrega se tiver usuário logado
+    if (!user || !user.id) return;
+
     try {
-      const res = await api.get('/humor');
+      // MUDANÇA: Busca apenas os registros DESTE usuário
+      const res = await api.get(`/humor/${user.id}`);
       setRegistros(res.data.reverse());
-    } catch (e) { console.log("Erro ao carregar"); }
+    } catch (e) { console.log("Erro ao carregar dados"); }
   };
 
-  useEffect(() => { carregarDados(); }, []);
+  // Carrega sempre que a tela abre ou o usuário muda
+  useEffect(() => { carregarDados(); }, [user]);
 
   // Função Inteligente: Serve para CRIAR ou ATUALIZAR
   const salvarOuAtualizar = async () => {
     if (!comentario.trim()) return Alert.alert("Ops", "Escreva uma nota sobre seu dia.");
     
-    const dados = { nivel, sentimento, comentario };
+    // MUDANÇA: Agora enviamos o ID do usuário junto
+    const dados = { 
+      nivel, 
+      sentimento, 
+      comentario,
+      usuarioId: user.id // <--- VÍNCULO COM O USUÁRIO
+    };
 
     try {
       if (editandoId) {
