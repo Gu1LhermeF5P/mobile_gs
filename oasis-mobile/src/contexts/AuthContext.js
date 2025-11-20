@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext } from 'react';
 import { Alert } from 'react-native';
+import api from '../services/api';
 
 const AuthContext = createContext({});
 
@@ -8,17 +9,37 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
 
   const signIn = async (email, password) => {
+    if (!email || !password) {
+      Alert.alert("Atenção", "Informe e-mail e senha.");
+      return;
+    }
+
     setLoading(true);
-    // Simulação de delay da API
-    setTimeout(() => {
-      if (email.includes('@')) {
-        // Sucesso simulado
-        setUser({ email, token: 'demo-token-oasis' });
+
+    try {
+      // LOGIN REAL NO JAVA
+      // Se a baseURL do api.js terminar em /api, use '/auth/login'
+      const response = await api.post('/auth/login', {
+        email: email,
+        senha: password
+      });
+
+      // Se chegou aqui, é 200 OK. O usuário existe.
+      // Salvamos o usuário no estado para liberar o App.
+      setUser(response.data);
+
+    } catch (error) {
+      console.log(error);
+      if (error.response) {
+        // Erro que veio do Java (401 ou 404)
+        Alert.alert("Falha no Login", "E-mail ou senha incorretos.");
       } else {
-        Alert.alert('Erro de Acesso', 'E-mail ou senha inválidos.');
+        // Erro de conexão (Java desligado ou IP errado)
+        Alert.alert("Erro de Conexão", "Não foi possível conectar ao servidor.");
       }
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   const signOut = () => {
