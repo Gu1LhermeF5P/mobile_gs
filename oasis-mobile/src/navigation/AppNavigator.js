@@ -36,7 +36,16 @@ function AppTabs() {
         // Configuração das cores da barra de abas
         tabBarActiveTintColor: colors.primary, // Cor do ícone ativo (Azul-petróleo)
         tabBarInactiveTintColor: colors.accentGrey, // Cor do ícone inativo (Cinza)
-        tabBarStyle: { backgroundColor: colors.white, borderTopColor: '#E0E0E0', height: 60, paddingBottom: 10 },
+        
+        // CORREÇÃO AQUI: Altura ajustada para 80 e Padding 20 para evitar botões do Android
+        tabBarStyle: { 
+          backgroundColor: colors.white, 
+          borderTopColor: '#E0E0E0', 
+          height: 80, 
+          paddingBottom: 20, 
+          paddingTop: 10 
+        },
+        
         tabBarIcon: ({ color, size, focused }) => {
           const icons = {
             Dashboard: focused ? 'home' : 'home-outline',
